@@ -1,0 +1,310 @@
+<html lang="id"><head>
+    <meta charset="UTF-8">
+    <title>droughts calc :3</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #13001f;
+            color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: #181818;
+            border: 1px solid #1e293b;
+            padding: 25px;
+            border-radius: 15px;
+            width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: none;
+        }
+
+        input[readonly] {
+            background: #443746;
+            color: #94a3b8;
+        }
+
+        .mutations {
+            margin-top: 8px;
+            padding-left: 5px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: #dbdbdb;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #b9b9b9;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #13001f70;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .error {
+            color: #ef4444;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #13001fe1;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background: #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>droughts calc :3</h2>
+
+    <label>Put that mf name here</label>
+    <div style="position: relative;">
+        <input type="text" id="brainrot" oninput="showSuggestions()" autocomplete="off">
+        <div id="suggestions" class="suggestions" style="display: none;"><div class="suggestion-item">money money man</div></div>
+    </div>
+
+    <label>This is their Base Stat ($ / Fish)</label>
+    <input type="text" id="baseStat" readonly="" value="-">
+
+    <label>Chuck their prestige here (0-4)</label>
+    <input type="number" id="rank" min="0" max="4" value="0">
+
+    <label>Put that cheeky level here</label>
+    <input type="number" id="level" min="1" value="1">
+
+    <label>Select the mutations that bitch has</label>
+    <div class="mutations">
+        <!-- ===== TEMPAT MENAMBAH MUTASI ===== -->
+        <input type="checkbox" class="mutation" value="50"> Snowy (+50%)<br>
+        <input type="checkbox" class="mutation" value="50"> Golden (+50%)<br>
+        <input type="checkbox" class="mutation" value="60"> Sakura (+60%)<br>
+        <input type="checkbox" class="mutation" value="70"> Tornado (+70%)<br>
+        <input type="checkbox" class="mutation" value="80"> Stinky (+80%)<br>
+        <input type="checkbox" class="mutation" value="90"> Lightning (+90%)<br>
+        <input type="checkbox" class="mutation" value="100"> Diamond (+100%)<br>
+        <input type="checkbox" class="mutation" value="110"> Radioactive (+110%)<br>
+        <input type="checkbox" class="mutation" value="140"> Magmatic (+140%)<br>
+        <input type="checkbox" class="mutation" value="140"> Galaxy (+140%)<br>
+        <input type="checkbox" class="mutation" value="200"> Fishing Master (+200%)<br>
+        <input type="checkbox" class="mutation" value="200"> Disco (+200%)<br>
+    </div>
+
+    <button onclick="hitung()">Calculate them stats</button>
+
+    <div class="result" id="result">
+        <b>Final Stat:</b><br>
+        nothing yet!<br><br>
+        <small>
+        Rank: ?<br>
+        Level: ?<br>
+        Mutation: ?
+        </small>
+    </div>
+    <div class="error" id="error"></div>
+</div>
+
+<script>
+
+const brainrotDB = {
+    "tung tung sahur": 100,
+    "cappucino assasino": 150,
+    "pipi potato": 300,
+    "cappuchina ballerina": 450,
+    "salamino penguino": 750,
+    "fluriflura": 937,
+    "tim cheese": 1125,
+    "orangutini ananasini": 1875,
+    "brr brr patapim": 3000,
+    "udin din din din dun": 4500,
+    "pipi kiwi": 5250,
+    "chef crabracadabra": 9000,
+    "boneca ambalabu": 12000,
+    "cacto hipopotamo": 13500,
+    "sigma boy": 18000,
+    "tukanno bananno": 32000,
+    "gorillo watermelodrillo": 37500,
+    "tric trac barabum": 52500,
+    "avocadini guffo": 63750,
+    "quivioli ameleonni": 100000,
+    "friggo camelo": 150000,
+    "pakrahmatmamat": 225000,
+    "karkerkar kurkur": 350000,
+    "la vacca saturnita": 1000000,
+    "tic tac sahur": 1750000,
+    "pot hotspot": 2250000,
+    "job job sahur": 2500000,
+    "la grande combination": 3000000,
+    "dul dul dul": 4500000,
+    "cavallo virtuoso": 5000000,
+    "67": 5000000,
+    "la esok sekolah": 6500000,
+    "giraffa celestre": 8000000,
+    "chillin chili": 10000000,
+    "swag soda": 12500000,
+    "matteo": 15000000,
+    "strawberelli flamingelli": 15500000,
+    "ketupat kepat": 16000000,
+    "cocosini mama": 20000000,
+    "ganganzelli trulala": 22500000,
+    "strawberry elephant": 50000000,
+    "crystalini ananassini": 55000000,
+    "meowl": 65000000,
+    "spiuniru golubiru": 70000000,
+    "dragon cannelloni": 75000000,
+    "alessio": 80000000,
+    "chicleteira bicicleteira": 90000000,
+    "piccione maccina": 92500000,
+    "crabbo limonetta": 95000000,
+    "money money man": 125000000,
+    "karloo": 225000000,
+    "tralalelodon": 55000000,
+    "orcadon": 58500000,
+    "blingo tentacolo": 62500000,
+    "eviledon": 65000000,
+    "moby bobby": 75000000,
+    "presento camelo": 15000,
+    "festive 67": 25000
+};
+
+function showSuggestions() {
+    const input = document.getElementById("brainrot");
+    const box = document.getElementById("suggestions");
+    const baseStat = document.getElementById("baseStat");
+    const error = document.getElementById("error");
+
+    const query = input.value.toLowerCase().trim();
+    box.innerHTML = "";
+    box.style.display = "none";
+
+    if (query.length < 1) {
+        baseStat.value = "-";
+        return;
+    }
+
+    const matches = Object.keys(brainrotDB)
+        .filter(name => name.startsWith(query));
+
+    if (matches.length === 0) {
+        error.innerHTML = "Brainrot Not Found";
+        baseStat.value = "-";
+        return;
+    }
+
+    error.innerHTML = "";
+    box.style.display = "block";
+
+    matches.forEach(name => {
+        const item = document.createElement("div");
+        item.className = "suggestion-item";
+        item.innerText = name;
+
+        item.onclick = () => {
+            input.value = name;
+            baseStat.value = `$${brainrotDB[name]}`;
+            box.style.display = "none";
+        };
+
+        box.appendChild(item);
+    });
+}
+
+document.addEventListener("click", e => {
+    const input = document.getElementById("brainrot");
+    const box = document.getElementById("suggestions");
+    if (!input.contains(e.target) && !box.contains(e.target)) {
+        box.style.display = "none";
+    }
+});
+
+function hitung() {
+    const name = document.getElementById("brainrot").value.toLowerCase().trim();
+    const level = parseInt(document.getElementById("level").value);
+    const rank = parseInt(document.getElementById("rank").value);
+    const result = document.getElementById("result");
+
+    if (!brainrotDB[name] || level < 1 || rank < 0 || rank > 4) {
+        result.innerHTML = "Stat: -";
+        return;
+    }
+
+    const baseStat = brainrotDB[name];
+
+    const rankMultiplier = 1 + (rank * 0.15);
+    const levelMultiplier = 1 + ((level - 1) * 0.5);
+
+    let mutationPercent = 0;
+    document.querySelectorAll(".mutation:checked").forEach(m => {
+        mutationPercent += parseFloat(m.value);
+    });
+    const mutationMultiplier = 1 + (mutationPercent / 100);
+
+    const finalStat =
+        ((baseStat * rankMultiplier) * levelMultiplier) * mutationMultiplier;
+
+    result.innerHTML = `
+        <b>Final Stat:</b><br>
+        $${finalStat.toFixed(2)} / Fish<br><br>
+        <small>
+        Rank: ${rankMultiplier}x<br>
+        Level: ${levelMultiplier}x<br>
+        Mutation: ${mutationMultiplier}x
+        </small>
+    `;
+}
+</script>
+
+
+
+</body></html>
