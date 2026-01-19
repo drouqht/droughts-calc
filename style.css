@@ -17,38 +17,21 @@ body {
 }
 
 
-
 /* =========================
    Card Container
    ========================= */
 
-   .icon-wrap {
-    position: absolute;
+  .icon-wrap {
+    position: absolute;   
     top: 14px;
     left: 14px;
 
-    display: flex;
+    display: flex;        
     align-items: center;
-    gap: 10px;
-
-    text-decoration: none;
+    gap: 10px;            
 }
-
-.icon-text {
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-
-    color: #c7d2fe;
-    white-space: nowrap;
-    pointer-events: none;
-
-    transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
 
 .h2-icon {
-    position: absolute;
     width: 60px;
     height: 60px;
 
@@ -59,6 +42,15 @@ body {
     opacity: 0.8;
     transform: scale(1.05);
     filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.6));
+}
+
+.icon-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: #c7d2fe;
+    white-space: nowrap;  
+    pointer-events: none;
 }
 
 .card {
@@ -316,11 +308,17 @@ button:active {
 
 
 /* =========================
-   Gradient Animation
+   Scripts
    ========================= */
 
 @keyframes gradientBG {
     0% {background-position: 0% 50%;}
     50% {background-position: 100% 50%;}
     100% {background-position: 0% 50%;}
+}
+
+@media (max-width: 420px) {
+    .icon-text {
+        display: none;  /* hide text on tiny screens */
+    }
 }
